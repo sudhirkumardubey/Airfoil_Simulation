@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# USER INPUTS -----------------------------------------------------------
+processors=4   # number of PC processors for parallel computation
+#------------------------------------------------------------------------
+
+echo "Starting OpenFOAM job at: " $(date)
+
+cp -r 0.orig 0
+
+blockMesh                                    > log.blockMesh
+extrudeMesh                                  > log.extrudeMesh
+decomposePar                                 > log.decomposePar
+mpirun -np $processors pimpleFoam -parallel  > log.pimpleFoam
+reconstructPar                               > log.reconstructPar
+foamToVTK                                    > log.foamToVTK
+
+echo "Ending OpenFOAM job at: " $(date)

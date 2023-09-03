@@ -1,0 +1,75 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  9
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       volVectorField;
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+#include        "$FOAM_CASE/initialConditions"
+speed           $velocityinlet;
+angleOfAttack   11; // Put in degrees
+
+angle           #calc "degToRad($angleOfAttack)"; //convert degree to radian
+
+
+liftDir         #codeStream
+{
+    codeInclude #{ #include "vector.H" #};
+    code #{ os << vector(-::sin($angle), ::cos($angle), 0); #};
+};
+
+dragDir         #codeStream
+{
+    codeInclude #{ #include "vector.H" #};
+    code #{ os << vector(::cos($angle), ::sin($angle), 0); #};
+};
+
+
+
+Uinlet         #codeStream
+{
+    codeInclude #{ #include "vector.H" #};
+    code #{ os << $speed*vector(::cos($angle), ::sin($angle), 0); #};
+};
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform $Uinlet;
+
+boundaryField
+{
+    Inlet
+    {
+        type            freestreamVelocity;
+        freestreamValue $internalField;
+    }
+
+    Outlet
+    {
+        type            freestreamVelocity;
+        freestreamValue $internalField;
+    }
+
+    Aerofoil
+    {
+        type            noSlip;
+    }
+
+    FrontandBack
+    {
+        type            empty;
+    }
+    
+    
+
+    #includeEtc "caseDicts/setConstraintTypes"
+}
+
+// ************************************************************************* //

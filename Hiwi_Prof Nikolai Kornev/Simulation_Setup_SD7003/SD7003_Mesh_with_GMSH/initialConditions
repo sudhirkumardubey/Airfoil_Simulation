@@ -1,0 +1,34 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.3.0                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+
+pressure	(0 0 0);		//Umgebungsdruck
+velocityinlet	4.25;		//inlet velocity
+fluidViscosity	1.5e-05;	//fluid viscosity //Air
+densitywater    1.0;            //water density at 20 Centigrade
+angleOfAttack	11;		//Angle of attack for the blade (Degree)
+
+refrencelength	1.0;		//refrence length
+refrencearea	1.0;		//refrence area
+
+turblengthscale	1.00;		//turbulent length scale for inflow generator
+turbintensity	0.05;		//input percent 10% ---> 0.10
+
+
+//turblentRii	 #calc "$velocityinlet*$velocityinlet * $turbintensity*$turbintensity"; //0.04515625
+turbulentKE	     0.271       //#calc "1.50 * $turblentRii";	//Kinetische Energie K	//1.4e-05  //0.067734375
+turbulentOmega	 8.568       //#calc "sqrt($turbulentKE) /0.547722558 /$turblengthscale"; //Dissipation von K, Omega 0.547722558=0.09^0.25 //0.4751644257
+turbulentVis	 0.02532       //#calc "$turbulentKE / $turbulentOmega";	//Turbulente viscosity //#eval "$5.0*fluidViscosity" //0.142549339
+
+t1time		35.0;	//time that eliminate most of transiation effects on flowfields aboud five revelotion of propeller
+t2time		37.0;	
+t3time		40.0; 	
+cellnumberxdir	500;
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

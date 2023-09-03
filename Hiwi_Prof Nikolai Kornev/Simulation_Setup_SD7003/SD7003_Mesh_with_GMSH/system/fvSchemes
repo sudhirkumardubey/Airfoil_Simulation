@@ -1,0 +1,90 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  9
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      fvSchemes;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+ddtSchemes
+{
+    default         steadyState;
+}
+
+gradSchemes
+{
+    //default           Gauss linear; 
+    default			    Gauss linear; //leastSquares
+	grad(U)			    cellLimited Gauss linear 1; //Gauss linear
+    grad(nuTilda)	    cellLimited Gauss linear 1;           
+}
+
+divSchemes
+{
+        default             none;
+        div(phi,U)          Gauss linearUpwind grad(U); //Gauss linear;  //Gauss linearUpwind grad(U) //		 Gauss LUST unlimitedGrad(U);  
+        div(phi,k)     	    Gauss limitedLinear 1;
+        div(phi,epsilon)	Gauss limitedLinear 1;
+        div(phi,s)      	bounded Gauss limitedLinear 1;
+        div(phi,omega)	    Gauss limitedLinear 1;
+        div(phi,R)		    Gauss limitedLinear 1;
+        div(R)		        Gauss linear;
+        div(U)		        Gauss linear;             // enables div function object
+        div(phi,nuTilda)	Gauss limitedLinear 0.33;
+        div((nuEff*dev2(T(grad(U))))) Gauss linear;
+//Based on old model
+/*
+    default         none;
+    
+    div(phi,U)      Gauss linearUpwind grad(U); //Gauss linear;  //Gauss linearUpwind grad(U) //		 Gauss LUST unlimitedGrad(U);  //Gauss upwind First order;
+    
+    div(phi,k)      Gauss limitedLinear 1;//Gauss upwind First order;
+
+    div(phi,omega)  Gauss upwind First order;
+        
+    div(phi,nuTilda) bounded Gauss linearUpwind grad(nuTilda);
+    
+    div(phi,R)      Gauss upwind First order;
+    
+    turbulence      Gauss upwind First order;
+    div(phi,k)      Gauss upwind First order;
+    div(phi,omega)  Gauss upwind First order;
+    
+    div(R)          Gauss linear;
+    
+    div((nuEff*dev2(T(grad(U))))) Gauss linear;
+*/    
+}
+
+laplacianSchemes
+{
+    default         Gauss linear corrected;
+}
+
+interpolationSchemes
+{
+    default         linear;
+}
+
+snGradSchemes
+{
+    default         corrected;
+}
+
+wallDist
+{
+    method meshWave;
+    nRequired	yes;
+}
+
+
+// ************************************************************************* //

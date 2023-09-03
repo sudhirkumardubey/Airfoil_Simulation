@@ -1,0 +1,181 @@
+High orthogonality hence core dumped error
+How to run me:
+
+
+
+#To clean the directory, this is optional
+
+foamCleanTutorials
+
+foamCleanPolyMesh
+
+
+
+#To generate the mesh and check mesh quality
+
+blockMesh
+
+checkMesh
+
+
+
+# Now you have four alternatives to run the case, depending if you want to plot the residuals on-the-fly or not.
+
+
+
+pyFoamPlotRunner.py  simpleFoam	
+paraFoam
+
+
+
+# alternatively 
+
+
+
+simpleFoam > log.simplefoam &
+pyFoamPlotWatcher.py log.simplefoam			
+
+
+
+# or 
+
+
+simpleFoam | tee log.simpleFoam
+
+
+
+# or
+
+simpleFoam > log.simpleFoam | tail -f log.simpleFoam
+
+
+#Plot residuals
+foamMonitor -l ./postProcessing/residuals/0/residuals.dat
+
+# using GMSH
+
+#Exporting Mesh to text file
+//here 3 is the dimension and test.msh is the output name
+
+gmsh main.geo -format msh2 -3 -o test.msh  
+
+gmshToFoam test.msh -case dummyCase
+
+rm test.msh
+
+
+# To Change mesh size globally
+
+gmsh fileName.geo -clscale 1 (this give mesh appprox 3000 nodes)
+gmsh fileName.geo -clscale 0.2 (this give mesh approx 231000 nodes)
+
+
+#TO see running program 
+
+ps -aux
+
+(get pid from here)
+
+
+
+#To kill running
+
+Kill pid
+
+///////////////
+
+to run the openfoam
+
+pisoFoam or simpleFoam
+
+
+# Steps To model in GMSH:
+1. Get airfoil .dat file from airfoiltool website online
+2. Use datToGeo.py to convert airfoil.dat file to airfoil.geo file (gives coordinates)
+3. Use gmsh to make the model, it is saved as .geo format.
+(Ref video: https://www.youtube.com/watch?v=bekRbU7rtZE)
+4. once done, you can save the mesh file directly from the gmsh as .msh file 
+or alternatively
+ use the code 
+gmsh main.geo -format msh2 -3 -o test.msh
+5. Once done, check the mesh quality with checkMesh
+6. Change the boundary names (In zero folder, for U, P etc) same as mesh file (Constant --> Ploymesh--> boundary)
+7. Inside polymesh boundary file also change if needed eg. for airfoil patch type is wall, frontandback will be empty
+ 
+(Reference video : https://www.youtube.com/watch?v=OetMSO3avrQ)
+
+
+
+
+# To plot Cp
+1. Select Static_cp_coeff.
+2. Go to end of iteration.
+3. Use plot over intersection curve, select axis of the normal to the plane, in our case Z-axis
+4. Select Reset to Data Bounds, and click Apply
+4. In the composite data set Index, select only Aerofoil in the patches section.
+5. X axis parameter , selecr X array name as Point_X
+6. To get the CSV file, use Export scene in the File menu. (dont use save data option)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Visualization
+
+paraFoam9
+
+
+
+
+
+  Surface{1}; Surface{2}; Surface{3}; Surface{4}; Surface{5}; Layers {{5,4},{0.5,1}}; Recombine;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

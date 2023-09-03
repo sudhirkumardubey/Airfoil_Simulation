@@ -1,0 +1,114 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  9
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    format      ascii;
+    class       dictionary;
+    object      fvSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    p
+    {
+        solver          GAMG;
+        smoother        GaussSeidel; //DICGaussSeidel; //DICGaussSeidel GaussSeidel
+        tolerance       1e-6;
+        relTol          0.01;
+    }
+
+    pFinal
+    {
+        $p;
+        smoother        GaussSeidel; //DICGaussSeidel;
+        tolerance       1e-06;
+        relTol          0;
+    }
+
+    "(U|k|omega|nuTilda)"
+    {
+        solver          PBiCGStab; //PBiCG //PBiCGStab //smoothSolver
+        preconditioner  DILU; //DILU //GaussSeidel //symGaussSeidel
+        tolerance       1e-5;
+        relTol          0.01;
+    }
+
+    "(U|k|nuTilda)Final"
+    {
+        $U;
+        tolerance       1e-06;
+        relTol          0;
+    }
+}
+
+SIMPLE
+{
+    residualControl
+    {
+        p               1e-6;
+        U               1e-5;
+        "(k|omega|e)"   1e-5;
+    }
+
+    nNonOrthogonalCorrectors 0;
+}
+
+relaxationFactors
+{
+    fields
+    {
+        p               0.3;
+        rho             0.01;
+    }
+    equations
+    {
+        U               0.7;
+        e               0.7;
+        "(k|omega)"     0.7;
+    }
+}
+
+PISO
+{
+    nCorrectors     3;  //2  //3  //4
+    nNonOrthogonalCorrectors 1;
+    pRefCell        0;
+    pRefValue       0;
+}
+
+PIMPLE
+{
+    correctPhi					yes;
+    nNonOrthogonalCorrectors	1;
+    nCorrectors				    2;
+    nOuterCorrectors			25; 
+    turbOnFinalIterOnly         false;//false
+
+    residualControl
+    {
+        U
+        {
+			tolerance	5e-5;
+			relTol		1e-3;
+        }
+        p
+        {
+			tolerance	5e-5;
+			relTol		1e-3;
+        }
+		"(k|epsilon|omega)"
+        {
+			tolerance	5e-5;
+			relTol		1e-3;
+        }
+     }
+
+}
+
+// ************************************************************************* //
